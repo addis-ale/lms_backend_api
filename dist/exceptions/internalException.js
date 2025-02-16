@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InternalException = void 0;
-const rootException_1 = require("./rootException");
-class InternalException extends rootException_1.HttpException {
+const root_1 = require("./root");
+class InternalException extends root_1.HttpException {
     constructor(message, error, errorCode) {
-        super(message, 500, error, errorCode);
+        super(message, errorCode, 500, error);
     }
 }
 exports.InternalException = InternalException;

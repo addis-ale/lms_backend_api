@@ -1,7 +1,7 @@
-import { HttpException } from "./rootException";
+import { HttpException } from "./root";
 
 export class BadRequest extends HttpException {
   constructor(message: string, errorcode: number) {
-    super(message, 400, null, errorcode);
+    super(message, errorcode, 400, null);
   }
 }

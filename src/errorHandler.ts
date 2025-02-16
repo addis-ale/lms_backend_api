@@ -1,23 +1,36 @@
-import { Response, Request, NextFunction } from "express";
-import { ErrorCode, HttpException } from "./exceptions/rootException";
+import { NextFunction, Request, Response } from "express";
+import { ErrorCodes, HttpException } from "./exceptions/root";
 import { InternalException } from "./exceptions/internalException";
+import { ZodError } from "zod";
+import { UnprecessableEntity } from "./exceptions/validation";
 
-export const errorHandler = (method: Function) => {
+export const errorHandler = (
+  method: (req: Request, res: Response, next: NextFunction) => Promise<void>
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await method(req, res, next);
     } catch (error: any) {
       let exception: HttpException;
-      if (error instanceof HttpException) {
+
+      // ✅ Handle Zod Validation Errors
+      if (error instanceof ZodError) {
+        exception = new UnprecessableEntity(
+          error.errors,
+          ErrorCodes.UNPROSSABLE_ENTITY,
+          "Validation failed"
+        );
+      } else if (error instanceof HttpException) {
         exception = error;
       } else {
         exception = new InternalException(
           "Something went wrong",
           error,
-          ErrorCode.INTERNAL_EXCEPTION
+          ErrorCodes.INTERNAL_EXEPTION
         );
       }
-      next(exception);
+
+      next(exception); // ✅ No need to return
     }
   };
 };

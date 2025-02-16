@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { HttpException } from "../exceptions/rootException";
+import { NextFunction, Request, Response } from "express";
+import { HttpException } from "../exceptions/root";
 
 export const errorMiddleware = (
   error: HttpException,
@@ -7,9 +7,9 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  res.send(error.statusCode).json({
+  res.status(error.statusCode).json({
     message: error.message,
-    error: error.error,
     errorCode: error.errorCode,
+    errors: error.errors,
   });
 };

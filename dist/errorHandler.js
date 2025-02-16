@@ -10,8 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = void 0;
-const rootException_1 = require("./exceptions/rootException");
+const root_1 = require("./exceptions/root");
 const internalException_1 = require("./exceptions/internalException");
+const zod_1 = require("zod");
+const validation_1 = require("./exceptions/validation");
 const errorHandler = (method) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -19,13 +21,17 @@ const errorHandler = (method) => {
         }
         catch (error) {
             let exception;
-            if (error instanceof rootException_1.HttpException) {
+            // ✅ Handle Zod Validation Errors
+            if (error instanceof zod_1.ZodError) {
+                exception = new validation_1.UnprecessableEntity(error.errors, root_1.ErrorCodes.UNPROSSABLE_ENTITY, "Validation failed");
+            }
+            else if (error instanceof root_1.HttpException) {
                 exception = error;
             }
             else {
-                exception = new internalException_1.InternalException("Something went wrong", error, rootException_1.ErrorCode.INTERNAL_EXCEPTION);
+                exception = new internalException_1.InternalException("Something went wrong", error, root_1.ErrorCodes.INTERNAL_EXEPTION);
             }
-            next(exception);
+            next(exception); // ✅ No need to return
         }
     });
 };
