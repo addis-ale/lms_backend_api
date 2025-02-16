@@ -48,7 +48,6 @@ const jwt = __importStar(require("jsonwebtoken"));
 const __1 = require("..");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.authorization;
-    console.log("Authorization Header:", token);
     if (!token) {
         return next(new unauthorized_1.UnauthorizedException("Unauthorized", root_1.ErrorCodes.UNAUTHORIZED));
     }
@@ -60,8 +59,8 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         const user = yield __1.prismaClient.user.findUnique({
             where: { id: payload.userId },
         });
-        console.log("User Found in Database:", user);
         if (!user) {
+            console.log("here is the  error");
             return next(new unauthorized_1.UnauthorizedException("Unauthorized", root_1.ErrorCodes.UNAUTHORIZED));
         }
         req.user = user; // ✅ Attach user object

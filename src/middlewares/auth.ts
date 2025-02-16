@@ -11,7 +11,6 @@ const authMiddleware = async (
   next: NextFunction
 ) => {
   const token = req.headers.authorization;
-  console.log("Authorization Header:", token);
 
   if (!token) {
     return next(
@@ -31,8 +30,10 @@ const authMiddleware = async (
     const user = await prismaClient.user.findUnique({
       where: { id: payload.userId },
     });
-    console.log("User Found in Database:", user);
+
     if (!user) {
+      console.log("here is the  error");
+
       return next(
         new UnauthorizedException("Unauthorized", ErrorCodes.UNAUTHORIZED)
       );
